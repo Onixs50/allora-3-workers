@@ -178,6 +178,14 @@ If you encounter any issues, you can restart your Docker containers with the fol
 cd $HOME && cd basic-coin-prediction-node
 docker compose restart
 ```
+# or 
+```bash
+docker compose restart worker-1
+
+docker compose restart worker-2
+
+docker compose restart worker-3
+```
 ## Wallet Setup
 
 When you run the setup script, you will be prompted to create a new wallet or recover an existing one. Follow these instructions:
