@@ -173,6 +173,7 @@ After setting up your wallet, make sure to obtain test tokens from the faucet. V
 ### Troubleshooting
 
 If you encounter any issues, you can restart your Docker containers with the following commands:
+![image](https://github.com/user-attachments/assets/50a83234-d3e1-4063-8b6e-2034d02c4e73)
 
 ```bash
 cd $HOME && cd basic-coin-prediction-node
