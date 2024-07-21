@@ -95,7 +95,7 @@ curl --location 'http://localhost:6000/api/v1/functions/execute' --header 'Conte
         "timeout": 10
     }
 }' | jq
-
+```
 ### Check Worker-2
 ```bash
 network_height=$(curl -s -X 'GET' 'https://allora-rpc.testnet-1.testnet.allora.network/abci_info?' -H 'accept: application/json' | jq -r .result.response.last_block_height) && \
@@ -123,7 +123,7 @@ curl --location 'http://localhost:6000/api/v1/functions/execute' --header 'Conte
         "timeout": 10
     }
 }' | jq
-
+```
 ### Check Worker-3
 ```bash
 network_height=$(curl -s -X 'GET' 'https://allora-rpc.testnet-1.testnet.allora.network/abci_info?' -H 'accept: application/json' | jq -r .result.response.last_block_height) && \
