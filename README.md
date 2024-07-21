@@ -48,7 +48,9 @@ Before running the new setup script, ensure you clean up any existing Docker con
 ## Check Node Status
 
 After running the setup script, you can monitor the status of your workers with the following commands:
-
+   ```bash
+  cd $HOME && cd basic-coin-prediction-node
+   ```
 - **Check logs for worker-1**:
     ```bash
     docker compose logs -f worker-1
@@ -153,6 +155,20 @@ curl --location 'http://localhost:6000/api/v1/functions/execute' --header 'Conte
         "timeout": 10
     }
 }' | jq
+```
+### Obtain Test Tokens
+
+After setting up your wallet, make sure to obtain test tokens from the faucet. Visit the following link to request tokens for your wallet:
+
+- [Allora Testnet Faucet](https://faucet.testnet-1.testnet.allora.network/)
+
+### Troubleshooting
+
+If you encounter any issues, you can restart your Docker containers with the following commands:
+
+```sh
+cd $HOME && cd basic-coin-prediction-node
+docker compose restart
 ```
 ## Wallet Setup
 
