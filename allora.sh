@@ -2,7 +2,7 @@
 
 # Function to display the styled message
 display_message() {
-  echo -e "by onixia"
+  echo -e "\e[1;32mby onixia\e[0m"
 }
 
 # Display the styled message at the beginning
