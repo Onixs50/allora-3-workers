@@ -33,16 +33,17 @@ Before running the new setup script, ensure you clean up any existing Docker con
 
 1. **Download and run the setup script**:
     ```bash
-    wget https://raw.githubusercontent.com/Onixs50/allora-3-workers/main/allora-3W.sh
-    chmod +x allora.sh
-    ./allora.sh
+     wget https://raw.githubusercontent.com/Onixs50/allora-3-workers/main/allora-3W.sh
+    chmod +x allora-3W.sh
+    ./allora-3W.sh
     ```
 
 2. **Log out and log back in** to apply Docker group changes (if you have recently updated Docker permissions).
 
 3. **Re-run the setup script** after logging back in:
     ```bash
-    ./allora.sh
+    ./allora-3W.sh
+
     ```
 
 ## Check Node Status
