@@ -7,7 +7,9 @@ Before running the new setup script, ensure you clean up any existing Docker con
 1. **Navigate to the right directory**:
     ```bash
     cd $HOME && cd basic-coin-prediction-node
+    ```
     # or 
+    ```bash
     cd $HOME && cd allora-chain/basic-coin-prediction-node
     ```
 
@@ -152,4 +154,20 @@ curl --location 'http://localhost:6000/api/v1/functions/execute' --header 'Conte
     }
 }' | jq
 ```
+## Wallet Setup
+
+When you run the setup script, you will be prompted to create a new wallet or recover an existing one. Follow these instructions:
+
+1. **Create a New Wallet:**
+   - When you see the prompt `Do you want to create a new wallet or recover an existing one? (create/recover)`, type `create`.
+   - Follow the on-screen instructions to generate a new wallet.
+   - Make sure to securely save the 12 or 24-word seed phrase provided.
+
+2. **Recover an Existing Wallet:**
+   - When you see the prompt `Do you want to create a new wallet or recover an existing one? (create/recover)`, type `recover`.
+   - Enter your 12 or 24-word seed phrase when prompted to restore your wallet.
+
+**Note:** Ensure you store your seed phrase securely. This phrase is crucial for recovering your wallet in case of loss.
+
 For any issues or further assistance, feel free to open an issue in the [GitHub repository](https://github.com/Onixs50/allora-3-workers).
+
