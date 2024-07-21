@@ -192,17 +192,8 @@ docker compose restart worker-3
 ```
 ## Wallet Setup
 
-When you run the setup script, you will be prompted to create a new wallet or recover an existing one. Follow these instructions:
-
-1. **Create a New Wallet:**
-   - When you see the prompt `Do you want to create a new wallet or recover an existing one? (create/recover)`, type `create`.
-   - Follow the on-screen instructions to generate a new wallet.
-   - Make sure to securely save the 12 or 24-word seed phrase provided.
-
-2. **Recover an Existing Wallet:**
-   - When you see the prompt `Do you want to create a new wallet or recover an existing one? (create/recover)`, type `recover`.
-   - Enter your 12 or 24-word seed phrase when prompted to restore your wallet.
-
+When you run the setup script, you will be prompted to create a new wallet or recover an existing one.
+ you can choice 1 or 2 
 
 
 ---
