@@ -156,6 +156,8 @@ curl --location 'http://localhost:6000/api/v1/functions/execute' --header 'Conte
     }
 }' | jq
 ```
+![image](https://github.com/user-attachments/assets/d5f70aea-57e0-4486-8feb-9d549ee31725)
+```
 ### Obtain Test Tokens
 
 After setting up your wallet, make sure to obtain test tokens from the faucet. Visit the following link to request tokens for your wallet:
@@ -184,6 +186,7 @@ When you run the setup script, you will be prompted to create a new wallet or re
    - Enter your 12 or 24-word seed phrase when prompted to restore your wallet.
 
 **Note:** Ensure you store your seed phrase securely. This phrase is crucial for recovering your wallet in case of loss.
+
 
 For any issues or further assistance, feel free to open an issue in the [GitHub repository](https://github.com/Onixs50/allora-3-workers).
 
