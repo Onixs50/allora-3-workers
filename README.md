@@ -33,7 +33,7 @@ Before running the new setup script, ensure you clean up any existing Docker con
 
 1. **Download and run the setup script**:
     ```bash
-    wget https://raw.githubusercontent.com/Onixs50/allora-3-workers/main/allora.sh
+    wget https://raw.githubusercontent.com/Onixs50/allora-3-workers/main/allora-3W.sh
     chmod +x allora.sh
     ./allora.sh
     ```
