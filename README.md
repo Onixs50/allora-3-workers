@@ -1,7 +1,10 @@
 # Allora 3 Workers Setup Guide
 
 ## Preparation
-
+0.If you have already installed it, be sure to delete the previous file!
+  ```bash
+   rm allora-3W.sh
+  ```
 Before running the new setup script, ensure you clean up any existing Docker containers and directories:
 
 1. **Navigate to the right directory**:
