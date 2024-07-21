@@ -200,6 +200,24 @@ When you run the setup script, you will be prompted to create a new wallet or re
    - When you see the prompt `Do you want to create a new wallet or recover an existing one? (create/recover)`, type `recover`.
    - Enter your 12 or 24-word seed phrase when prompted to restore your wallet.
 
+
+
+---
+
+### Update: Automatic Log Checking and Container Restart
+
+This script has been updated to automatically check container logs and restart them if errors are detected. Key features include:
+
+1. **Log Error Detection**: The script checks container logs for specific error messages.
+2. **Automatic Restart**: Containers with detected errors are automatically restarted.
+3. **Periodic Status Checks**: The script periodically verifies the status of all containers to ensure proper operation.
+
+These updates improve system stability by handling errors automatically.
+
+---
+
+
+
 **Note:** Ensure you store your seed phrase securely. This phrase is crucial for recovering your wallet in case of loss.
 
 
