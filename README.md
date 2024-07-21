@@ -155,20 +155,25 @@ curl --location 'http://localhost:6000/api/v1/functions/execute' --header 'Conte
         "timeout": 10
     }
 }' | jq
-```
+ ```
+
 ![image](https://github.com/user-attachments/assets/d5f70aea-57e0-4486-8feb-9d549ee31725)
-```
+
+ 
+
 ### Obtain Test Tokens
 
 After setting up your wallet, make sure to obtain test tokens from the faucet. Visit the following link to request tokens for your wallet:
 
 - [Allora Testnet Faucet](https://faucet.testnet-1.testnet.allora.network/)
 
+
+
 ### Troubleshooting
 
 If you encounter any issues, you can restart your Docker containers with the following commands:
 
-```sh
+```bash
 cd $HOME && cd basic-coin-prediction-node
 docker compose restart
 ```
