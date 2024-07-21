@@ -2,104 +2,123 @@
 
 # Function to display the styled message
 display_message() {
-  echo -e "\e[1;32mby onixia\e[0m"
+  local msg="by onixia"
+  local len=${#msg}
+  local border=$(printf "%${len}s" | tr ' ' '-')
+  echo -e "\e[1;32m${border}\e[0m"
+  echo -e "\e[1;32m$msg\e[0m"
+  echo -e "\e[1;32m${border}\e[0m"
 }
 
-# Display the styled message at the beginning
+# Clear the screen and display the message
+clear
 display_message
 
-# Check if re-running after logout
-if [ -f ~/.docker_setup_stage ]; then
-  stage=$(cat ~/.docker_setup_stage)
-else
-  stage="start"
-fi
-
-# Update and Upgrade
-if [ "$stage" == "start" ]; then
-  sudo apt update && sudo apt upgrade -y
-
-  # Install Dependencies
-  sudo apt install -y ca-certificates zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev curl git wget make jq build-essential pkg-config lsb-release libssl-dev libreadline-dev libffi-dev gcc screen unzip lz4 python3 python3-pip
-
-  # Install Docker
-  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-  echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-  sudo apt-get update
-  sudo apt-get install -y docker-ce docker-ce-cli containerd.io
-  docker version
-
-  # Install Docker Compose
-  VER=$(curl -s https://api.github.com/repos/docker/compose/releases/latest | grep tag_name | cut -d '"' -f 4)
-  sudo curl -L "https://github.com/docker/compose/releases/download/$VER/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-  sudo chmod +x /usr/local/bin/docker-compose
-  docker-compose --version
-
-  # Docker Permission
-  sudo groupadd docker || true
-  sudo usermod -aG docker $USER
-
-  echo "docker" > ~/.docker_setup_stage
-
-  # Notify user to log out and back in
-  echo -e "\e[31mPlease log out and log back in to apply Docker group changes.\e[0m"
-  echo -e "\e[31mThen, re-run this script to continue the setup.\e[0m"
-
-  # Stop script execution for manual action
-  exit 0
-fi
-
-if [ "$stage" == "docker" ]; then
-
-  # Install Go
-  sudo rm -rf /usr/local/go
-  curl -L https://go.dev/dl/go1.22.4.linux-amd64.tar.gz | sudo tar -xzf - -C /usr/local
-  echo 'export PATH=$PATH:/usr/local/go/bin:$HOME/go/bin' >> $HOME/.bash_profile
-  echo 'export PATH=$PATH:$(go env GOPATH)/bin' >> $HOME/.bash_profile
-  source $HOME/.bash_profile
-  go version
-
-  # Install Allorad
-  git clone https://github.com/allora-network/allora-chain.git
-  cd allora-chain && make all
-  allorad version
-
-  # Key management
-  echo "Do you want to create a new wallet or recover an existing one? (create/recover)"
-  read -r wallet_option
-
-  if [ "$wallet_option" = "recover" ]; then
-    allorad keys add testkey --recover
+# Function for the installation and configuration process
+install_and_configure() {
+  # Check if re-running after logout
+  if [ -f ~/.docker_setup_stage ]; then
+    stage=$(cat ~/.docker_setup_stage)
   else
-    allorad keys add testkey
+    stage="start"
   fi
 
-  # Install workers
-  cd $HOME && git clone https://github.com/allora-network/basic-coin-prediction-node
-  cd basic-coin-prediction-node
+  if [ "$stage" == "start" ]; then
+    echo -e "\e[1;34m===== Updating System =====\e[0m"
+    sudo apt update && sudo apt upgrade -y
 
-  mkdir workers
-  mkdir workers/worker-1 workers/worker-2 workers/worker-3 head-data
-  sudo chmod -R 777 workers/worker-1 workers/worker-2 workers/worker-3 head-data
+    echo -e "\e[1;34m===== Installing Dependencies =====\e[0m"
+    sudo apt install -y ca-certificates zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev curl git wget make jq build-essential pkg-config lsb-release libssl-dev libreadline-dev libffi-dev gcc screen unzip lz4 python3 python3-pip
 
-  # Create head keys
-  sudo docker run -it --entrypoint=bash -v "$PWD/head-data":/data alloranetwork/allora-inference-base:latest -c "mkdir -p /data/keys && (cd /data/keys && allora-keys)"
+    echo -e "\e[1;34m===== Installing Docker =====\e[0m"
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+    sudo apt-get update
+    sudo apt-get install -y docker-ce docker-ce-cli containerd.io
+    docker version
 
-  # Create worker keys
-  for i in {1..3}; do
-    sudo docker run -it --entrypoint=bash -v "$PWD/workers/worker-$i":/data alloranetwork/allora-inference-base:latest -c "mkdir -p /data/keys && (cd /data/keys && allora-keys)"
-  done
+    echo -e "\e[1;34m===== Installing Docker Compose =====\e[0m"
+    VER=$(curl -s https://api.github.com/repos/docker/compose/releases/latest | grep tag_name | cut -d '"' -f 4)
+    sudo curl -L "https://github.com/docker/compose/releases/download/$VER/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+    sudo chmod +x /usr/local/bin/docker-compose
+    docker-compose --version
 
-  # Copy the head-id
-  HEAD_ID=$(cat head-data/keys/identity)
-  echo "Save this HEAD_ID: $HEAD_ID"
+    echo -e "\e[1;34m===== Setting Docker Permissions =====\e[0m"
+    sudo groupadd docker || true
+    sudo usermod -aG docker $USER
 
-  # Save variables
-  echo "Enter the WALLET_SEED_PHRASE:"
-  read -r WALLET_SEED_PHRASE
+    echo "docker" > ~/.docker_setup_stage
 
-  # Create docker-compose.yml
-  cat > docker-compose.yml <<EOL
+    echo -e "\e[31mPlease log out and log back in to apply Docker group changes.\e[0m"
+    echo -e "\e[31mThen, re-run this script to continue the setup.\e[0m"
+
+    exit 0
+  fi
+
+  if [ "$stage" == "docker" ]; then
+    echo -e "\e[1;34m===== Installing Go =====\e[0m"
+    sudo rm -rf /usr/local/go
+    curl -L https://go.dev/dl/go1.22.4.linux-amd64.tar.gz | sudo tar -xzf - -C /usr/local
+    echo 'export PATH=$PATH:/usr/local/go/bin:$HOME/go/bin' >> $HOME/.bash_profile
+    echo 'export PATH=$PATH:$(go env GOPATH)/bin' >> $HOME/.bash_profile
+    source $HOME/.bash_profile
+    go version
+
+    echo -e "\e[1;34m===== Installing Allorad =====\e[0m"
+    git clone https://github.com/allora-network/allora-chain.git
+    cd allora-chain && make all
+    allorad version
+
+    echo -e "\e[1;34m===== Wallet Setup =====\e[0m"
+    echo -e "\e[1;33mPlease choose an option:\e[0m"
+    echo -e "\e[1;32m1) Create a new wallet\e[0m"
+    echo -e "\e[1;32m2) Recover an existing wallet\e[0m"
+
+    while true; do
+        read -p "Enter your choice (1 or 2): " wallet_choice
+        case $wallet_choice in
+            1)
+                echo -e "\e[1;36mCreating a new wallet...\e[0m"
+                allorad keys add testkey
+                break
+                ;;
+            2)
+                echo -e "\e[1;36mRecovering an existing wallet...\e[0m"
+                allorad keys add testkey --recover
+                break
+                ;;
+            *)
+                echo -e "\e[1;31mInvalid choice. Please enter 1 or 2.\e[0m"
+                ;;
+        esac
+    done
+
+    echo -e "\e[1;32mWallet setup completed successfully!\e[0m"
+
+    echo -e "\e[1;34m===== Installing Workers =====\e[0m"
+    cd $HOME && git clone https://github.com/allora-network/basic-coin-prediction-node
+    cd basic-coin-prediction-node
+
+    mkdir workers
+    mkdir workers/worker-1 workers/worker-2 workers/worker-3 head-data
+    sudo chmod -R 777 workers/worker-1 workers/worker-2 workers/worker-3 head-data
+
+    echo -e "\e[1;34m===== Creating Head Keys =====\e[0m"
+    sudo docker run -it --entrypoint=bash -v "$PWD/head-data":/data alloranetwork/allora-inference-base:latest -c "mkdir -p /data/keys && (cd /data/keys && allora-keys)"
+
+    echo -e "\e[1;34m===== Creating Worker Keys =====\e[0m"
+    for i in {1..3}; do
+      sudo docker run -it --entrypoint=bash -v "$PWD/workers/worker-$i":/data alloranetwork/allora-inference-base:latest -c "mkdir -p /data/keys && (cd /data/keys && allora-keys)"
+    done
+
+    HEAD_ID=$(cat head-data/keys/identity)
+    echo -e "\e[1;33mSave this HEAD_ID: $HEAD_ID\e[0m"
+
+    echo -e "\e[1;34m===== Enter Wallet Seed Phrase =====\e[0m"
+    read -p "Enter the WALLET_SEED_PHRASE: " WALLET_SEED_PHRASE
+
+    echo -e "\e[1;34m===== Creating docker-compose.yml =====\e[0m"
+    cat > docker-compose.yml <<EOL
 version: '3'
 
 services:
@@ -310,14 +329,78 @@ volumes:
   head-data:
 EOL
 
-# Run worker
-docker-compose build
-docker-compose up -d
+    echo -e "\e[1;34m===== Running Docker Compose =====\e[0m"
+    docker-compose build
+    docker-compose up -d
 
-# Clean up stage file
-rm ~/.docker_setup_stage
+    echo -e "\e[1;32m===== Setup Complete =====\e[0m"
+    display_message
+    echo "docker" > ~/.docker_setup_stage
+  fi
+}
 
-# Display styled message at end of script
-display_message
+# Function to check logs and restart containers if needed
+check_logs_and_restart() {
+  local containers=("worker-1" "worker-2" "worker-3")
+  local retry_count=0
+  local max_retries=3
+  local error_containers=()
+  
+  # First pass to check initial status of containers
+  for container in "${containers[@]}"; do
+    echo -e "\e[1;34mChecking logs for $container...\e[0m"
 
-fi
+    # Check logs for errors
+    error_count=$(docker logs $container 2>&1 | grep -c "rpc error: code = Unknown desc = rpc error")
+    
+    if [ "$error_count" -ge "$max_retries" ]; then
+      echo -e "\e[1;31mError detected in $container. Marking for restart...\e[0m"
+      error_containers+=($container)
+    else
+      echo -e "\e[1;32m$container is operating normally.\e[0m"
+    fi
+  done
+
+  # Continue checking and restarting containers until all errors are resolved
+  while [ ${#error_containers[@]} -gt 0 ]; do
+    for container in "${error_containers[@]}"; do
+      echo -e "\e[1;34mChecking logs for $container...\e[0m"
+
+      # Check logs for errors
+      error_count=$(docker logs $container 2>&1 | grep -c "rpc error: code = Unknown desc = rpc error")
+      
+      if [ "$error_count" -ge "$max_retries" ]; then
+        echo -e "\e[1;31mError detected in $container. Restarting container...\e[0m"
+        docker restart $container
+        sleep 60
+      else
+        echo -e "\e[1;32m$container is operating normally.\e[0m"
+        # Remove container from error list if no errors
+        error_containers=($(echo "${error_containers[@]}" | tr ' ' '\n' | grep -v "^$container$" | tr '\n' ' '))
+      fi
+    done
+    sleep 60
+  done
+  
+  echo -e "\e[1;32mAll containers are operating normally!\e[0m"
+}
+
+# Main script logic
+echo -e "\e[1;33mChoose an option:\e[0m"
+echo -e "\e[1;32m1) Install and configure\e[0m"
+echo -e "\e[1;32m2) Check node status\e[0m"
+
+read -p "Enter your choice (1 or 2): " choice
+
+case $choice in
+  1)
+    install_and_configure
+    ;;
+  2)
+    check_logs_and_restart
+    ;;
+  *)
+    echo -e "\e[1;31mInvalid choice. Exiting...\e[0m"
+    exit 1
+    ;;
+esac
