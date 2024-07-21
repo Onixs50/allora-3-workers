@@ -151,5 +151,5 @@ curl --location 'http://localhost:6000/api/v1/functions/execute' --header 'Conte
         "timeout": 10
     }
 }' | jq
-
+```
 For any issues or further assistance, feel free to open an issue in the [GitHub repository](https://github.com/Onixs50/allora-3-workers).
